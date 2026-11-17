@@ -137,6 +137,13 @@ class EngineTests(unittest.TestCase):
         with self.assertRaises(EngineError):
             replay(self.initial, [event], self.registry)
 
+
+    def test_t10_replay_same_inputs_same_result(self):
+        events = build_v1_0_legacy_events()
+        first = replay(self.initial, events, self.registry)
+        second = replay(self.initial, events, self.registry)
+        self.assertEqual(first, second)
+
     def test_legacy_cost_helper(self):
         audit = audit_legacy_resource_cost(2, 5, 2)
         self.assertEqual(audit["derived_delta"], 3)
