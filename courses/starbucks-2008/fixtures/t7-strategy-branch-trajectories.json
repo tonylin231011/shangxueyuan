@@ -1,0 +1,55 @@
+{
+  "test_id": "T7",
+  "classification": "I|deterministic engine test using explicit S|classroom parameters",
+  "initial_state": {
+    "decision_energy": 12,
+    "board_trust": 7,
+    "organization_execution_capacity": 8,
+    "brand_trust_index": 100,
+    "employee_morale_index": 100,
+    "product_prune_units_cumulative": 0,
+    "training_coverage_stores": 0,
+    "organization_load_points": 0.0,
+    "evidence_quality_points": 0.0,
+    "expansion_delay_days": 0
+  },
+  "registered_rule": "strategy.apply_illustrative",
+  "frozen_parameters": {
+    "load_per_training_store": 0.5,
+    "load_per_prune_unit": 0.2,
+    "evidence_gain_per_pilot_store": 0.5
+  },
+  "branch_A": {
+    "label": "immediate broad simplification and training",
+    "inputs": {
+      "product_prune_units": 3,
+      "training_store_count": 24,
+      "pilot_store_count": 0,
+      "expansion_delay_days": 0
+    },
+    "expected_state": {
+      "product_prune_units_cumulative": 3,
+      "training_coverage_stores": 24,
+      "organization_load_points": 12.6,
+      "evidence_quality_points": 0.0,
+      "expansion_delay_days": 0
+    }
+  },
+  "branch_B": {
+    "label": "small pilot and deferred expansion decision",
+    "inputs": {
+      "product_prune_units": 0,
+      "training_store_count": 2,
+      "pilot_store_count": 2,
+      "expansion_delay_days": 7
+    },
+    "expected_state": {
+      "product_prune_units_cumulative": 0,
+      "training_coverage_stores": 2,
+      "organization_load_points": 1.0,
+      "evidence_quality_points": 1.0,
+      "expansion_delay_days": 7
+    }
+  },
+  "interpretation": "The two trajectories differ because the same frozen rule and parameters receive different strategy inputs. These counters are illustrative mechanics, not historical Starbucks estimates, causal effects, or a claim that either strategy is superior."
+}

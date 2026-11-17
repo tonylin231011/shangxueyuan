@@ -20,6 +20,7 @@
 - URL：https://www.sec.gov/Archives/edgar/data/829224/000095013407024667/v33834e10vk.htm
 - 可支持的事实：
   - 2007财年净收入约94亿美元，同比增长21%；
+  - 美国业务同店销售虽处于目标区间，但公司明确称两次提价抵消了美国业务持平至负增长的交易笔数趋势（10-K Item 7，Management Overview）；
   - 可比门店销售增长5%，其中平均交易金额增长4%，顾客交易笔数增长1%；
   - 2007财年营业利润率11.2%，同比收窄约30个基点；
   - 财年内开设直营和授权门店合计2,571家，其中约70%在美国，期末门店总数超过15,000家；
@@ -48,7 +49,7 @@
 ### H4. Howard Schultz 2008年1月7日员工信件：Transformation Agenda Communication #1
 
 - 发布机构：Starbucks Archive
-- URL：https://archive.starbucks.com/uploads/2018/12/4a-transformation-memos-transformation-agenda-communication-1-2008-jan-7-final.pdf
+- 可检索标题：[Transformation Agenda Communication #1 — January 7, 2008](https://archive.starbucks.com/uploads/2018/12/4a-transformation-memos-transformation-agenda-communication-1-2008-jan-7-final.pdf)（Starbucks Archive PDF；2026-11-17已验证可打开，正文第1–3页）
 - 可支持的事实：
   - Schultz称公司在增长过程中曾提前投入基础设施，导致官僚化；
   - 提出改善美国业务、为门店伙伴提供更好的培训与工具、放慢美国门店开店速度、关闭部分表现不佳门店，并重新关注门店单位经济和执行。
@@ -57,7 +58,7 @@
 ### H5. Howard Schultz 2008年1月11日员工信件：Transformation Agenda Communication #2
 
 - 发布机构：Starbucks Archive
-- URL：https://archive.starbucks.com/uploads/2018/12/4b-transformation-memos-transformation-agenda-communication-2-2008-jan-11-final.pdf
+- 可检索标题：[Transformation Agenda Communication #2 — January 11, 2008](https://archive.starbucks.com/uploads/2018/12/4b-transformation-memos-transformation-agenda-communication-2-2008-jan-11-final.pdf)（Starbucks Archive PDF；2026-11-17已验证可打开，正文第1–2页）
 - 可支持的事实：
   - 信件日期为2008年1月11日，主题为新的领导团队；
   - Schultz列明Martin Coles为COO、Pete Bocian为EVP/CFO/Chief Administrative Officer、Paula Boggs为EVP/Law and Corporate Affairs；
@@ -67,7 +68,7 @@
 ### H6. Howard Schultz 2008年1月30日员工信件：Transformation Agenda Communication #3
 
 - 发布机构：Starbucks Archive
-- URL：https://archive.starbucks.com/uploads/2018/12/4c-transformation-memos-transformation-agenda-communication-3-2008-jan-30-final.pdf
+- 可检索标题：[Transformation Agenda Communication #3 — January 30, 2008](https://archive.starbucks.com/uploads/2018/12/4c-transformation-memos-transformation-agenda-communication-3-2008-jan-30-final.pdf)（Starbucks Archive PDF；2026-11-17已验证可打开，正文第1–4页）
 - 可支持的事实：
   - 1月30日Schultz向员工更新转型议程；
   - 将议程概括为改善美国业务、重新点燃顾客情感联结、进行长期基础性变革；
@@ -77,9 +78,10 @@
 ### H7. FY2007第四季度业绩准备稿
 
 - 发布机构：Starbucks investor relations historical archive
-- URL：https://media.corporate-ir.net/media_files/irol/99/99518/q407/web_q4_fy_2007_prepared_remarks.pdf
-- 可支持的事实：FY2007第四季度美国业务收入、同店销售、平均交易金额等季度业绩披露。
-- 适用限制：季度指标与全年指标口径不同，不得混用。
+- 可检索标题：[Starbucks Coffee Company Fiscal 2007 Fourth Quarter and Fiscal Year End Financial Results Prepared Remarks — 2007-11-15](https://media.corporate-ir.net/media_files/irol/99/99518/q407/web_q4_fy_2007_prepared_remarks.pdf)（PDF；2026-11-17已验证可打开）。
+- 关键定位：第4页（美国交易趋势、提价与顾客到店频率）；第19–20页（FY2008目标）。
+- 可支持的事实：FY2007美国业务第四季度交易笔数下降1%、平均交易金额增长5%；FY2007美国业务同店销售增长4%，几乎全部由平均交易金额驱动；FY2008目标包括美国约900家直营及700家授权门店、国际约900家新店、同店销售增长3%–5%、总收入增长约17%–18%至超过110亿美元、全年EPS 1.02–1.05美元。
+- 适用限制：季度指标、美国业务全年指标与公司合并口径必须分开；FY2008目标是2007-11-15的管理层前瞻目标，不是已实现结果。
 
 ## 3. 重要历史线索：价格与交易频率
 
@@ -110,3 +112,17 @@ FY2007 10-K明确提及，经济放缓与当年价格上调被管理层认为影
 5. 可信度和是否存在口径差异。
 
 不得只给搜索摘要、二手文章或无出处的“常识”。
+
+
+## 6. 入局前已公开的FY2008经营目标（H8）
+
+- 公开日期：2007-11-15，早于本局模拟入局日。
+- 来源：H7《Starbucks Coffee Company Fiscal 2007 Fourth Quarter and Fiscal Year End Financial Results Prepared Remarks》，第19–20页。
+- 美国门店目标：约900家直营新店、700家授权新店。
+- 国际门店目标：约900家净新增门店，其中300家直营、600家授权。
+- 可比门店销售增长目标：3%–5%。
+- 总净收入增长目标：约17%–18%，超过110亿美元。
+- 总公司营业利润率：预计全年同比小幅扩张；第一季度承压，预计下半年改善。
+- EPS目标：1.02–1.05美元，预计增长17%–21%。
+- 美国业务背景：同一份准备稿第4页称，美国业务FY2007全年同店销售增长4%，几乎全部由平均交易金额驱动；第四季度交易笔数下降1%，平均交易金额增长5%；管理层称宏观经济放缓与2007年两次提价影响了顾客到店频率。
+- 口径纪律：上述美国业务数据不能与公司合并同店销售增长5%（交易笔数+1%、平均交易金额+4%）混为一谈。

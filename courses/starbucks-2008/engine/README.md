@@ -1,7 +1,8 @@
-# V1.1 Event Ledger Prototype
+# V1.2 Rule-Registered Event Engine
 
-This is an executable proof of concept for the V1.1 simulation-engine design.
-It is **not** a calibrated Starbucks operating model and does not generate fictional evidence.
+This is an auditable classroom engine, not a calibrated Starbucks operating model.
+Events submit inputs to pre-registered rule functions; event authors cannot write
+arbitrary before/after state values.
 
 ## Run tests
 
@@ -13,13 +14,21 @@ python -m unittest discover -s courses/starbucks-2008/tests -v
 
 ## Contract
 
-- State changes must be explicit and include a rule ID.
+- A frozen rule registry maps each rule_id to an executable function and immutable, pre-registered parameters. RuleInvocation inputs are also immutable.
+- Events contain rule invocations and inputs, not author-supplied state deltas.
+- Unregistered rules, invalid inputs, unknown state fields, duplicate event IDs and unresolved dependencies fail.
 - Every event has a timezone-aware simulation timestamp.
-- Decision energy is consumed through event cost, not an arbitrary state mutation.
-- Events are replayed in time order; duplicate IDs and failed preconditions are rejected.
-- Legacy accounting conflicts are reported, never silently corrected.
-- Index arithmetic is only valid when the compared indices share the same base.
+- Parallel tasks may overlap in calendar time; state commits are deterministically ordered by sim_time, sequence and event_id.
+- Index arithmetic requires matching base period and base value.
+- Evidence grading is a design guardrail, not a causal-effect estimator.
+- NPC trigger evaluation records both fired and non-fired conditions with reasons.
+- V1.0 MOVE 001–005 are loaded as the first legacy fixture; MOVE 003's accounting conflict and MOVE 004's missing sub-action prices remain visible.
 
-The prototype intentionally does not implement NPC planning, evidence generation, randomness,
-calendar scheduling, or a calibrated business-state model. Those require separate specifications
-and evidence; they must not be improvised inside the presentation layer.
+## Deliberate limits
+
+The illustrative strategy rule exists to test branch sensitivity under fixed parameters.
+Its parameters are classroom assumptions, not empirical estimates. A passing T7 test
+demonstrates deterministic path divergence, not which strategy would have won in reality.
+
+The engine does not yet implement full NPC planning, a validated historical information
+release gate, a complete task scheduler, or a calibrated business-state model.

@@ -72,30 +72,31 @@ V1.0 的模拟反馈主要由叙事脚本生成，缺少统一状态转移机制
 {
   "event_id": "EVT-0001",
   "sim_time": "2008-01-08T09:00:00-08:00",
-  "event_type": "player_action|execution|npc_action|market_shock|evidence_release|state_observation",
+  "event_type": "player_action",
   "actor": "CEO",
-  "action_or_trigger": "request_customer_cohort_analysis",
-  "preconditions": [],
-  "inputs": ["EVD-0001"],
-  "cost": {
-    "decision_energy": 1,
-    "calendar_hours": 12,
-    "execution_capacity": 0
-  },
-  "state_delta": [],
-  "uncertainty": [],
-  "causal_links": [],
+  "action": "request_customer_cohort_analysis",
+  "sequence": 1,
+  "rules": [
+    {
+      "rule_id": "resource.charge",
+      "inputs": {"cost": 1}
+    }
+  ],
+  "evidence_ids": ["EVD-0001"],
+  "parallel_group": null,
+  "depends_on": [],
   "player_visible": true,
-  "seed": null,
-  "notes": "描述性记录"
+  "notes": "事件只提交规则输入，不直接填写状态差分"
 }
 ```
 
 字段约束：
-- `state_delta` 必须列出变量、旧值、新值、单位和转换规则ID。
-- `uncertainty` 保存范围、概率或定性限制；不允许把点估计伪装成确定值。
-- `causal_links` 指向行动、证据和规则；不能只写“因为CEO要求”。
-- 纯叙事事件也必须标注 `state_delta=[]`，避免误认为它改变了经营状态。
+- 状态差分只能由预先注册的规则函数计算；事件作者不得填写任意 before/after。
+- 每个rule_id必须映射到可执行函数、不可变参数、输入约束和允许写入的状态字段。
+- 规则注册表在分支运行前冻结；规则或参数变更必须创建新版本。
+- uncertainty保存范围、概率或定性限制；不允许把点估计伪装成确定值。
+- causal_links在运行记录中指向行动、证据和规则；不能只写“因为CEO要求”。
+- 纯叙事事件允许rules=[]，且不得改变世界状态。
 - 修订错误时追加更正事件，不覆盖历史事件。
 
 ## 5. 三种资源严格分账
@@ -315,3 +316,32 @@ while simulation_not_ended:
 - 真实星巴克门店层面的内部数据不可得，模拟不能宣称历史精确重建。
 - 状态模型的参数需要明确标为课堂假设，并通过玩家体验测试调整。
 - 引擎实现技术选型、持久化格式和测试执行环境尚未决定。
+
+
+## 15. V1.2实现补充（与运行代码一致）
+
+V1.2把原型中的作者填写状态差分改为规则注册表：
+- RuleRegistry 将 rule_id 映射到可执行函数与预登记参数；
+- Event 仅携带 RuleInvocation(rule_id, inputs)，不再接受作者直接填写的状态 before/after；
+- 规则函数返回状态更新，内核检查目标字段、类型和资源不变量；
+- 未注册的rule_id、未知状态字段和不满足前置条件的输入必须失败。
+
+### 15.1 并行事件的确定性提交
+
+日历任务可以重叠执行，但状态变更必须有可重放的提交顺序。V1.2按 sim_time → sequence → event_id 排序；依赖由 depends_on 显式声明。该顺序只定义账本提交顺序，不表示任务执行本身串行。未来若需要原子并行批次，需单独实现冲突检测和同快照合并，不可用叙事约定代替。
+
+### 15.2 指数与证据护栏
+
+IndexValue 必须携带基期和基准值；不同基期拒绝计算。证据评估返回设计等级，不自动把随机化标签等同因果证明。培训试点中的经理主动性与排班变化作为已知混杂因素保留。
+
+### 15.3 对手触发审计
+
+evaluate_triggers 对每个触发器写入检查时间、条件结果、动作或未行动原因。未触发记录与触发记录同等重要。
+
+### 15.4 真实棋谱fixture与边界
+
+首个fixture回填V1.0 MOVE 001–005。MOVE 003的成本冲突按历史记录保留；MOVE 004包级成本保留，但子行动成本分配缺失。fixture是旧棋谱的审计载入，不代表所有经营状态都已被公式化，也不代表这些S类数据获得了历史真实性。
+
+### 15.5 双策略测试的解释限制
+
+T7使用V1.0真实初始治理状态（决策精力12、董事会信任7、组织执行能力8、品牌信任指数100、员工士气指数100）建立两条策略路径。额外的执行负荷、培训覆盖和证据质量字段是引擎计数器；策略规则参数为预登记课堂假设，不是经星巴克真实数据校准的因果模型。测试证明规则响应不同输入并形成不同轨迹，不证明哪条策略在真实历史中更优。
