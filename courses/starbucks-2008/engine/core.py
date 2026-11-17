@@ -9,6 +9,7 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Callable, Iterable, Mapping
+from types import MappingProxyType
 
 
 class EngineError(ValueError):
@@ -67,7 +68,7 @@ class RuleRegistry:
         if not rule_id or rule_id in self._rules:
             raise EngineError(f"Missing or duplicate rule_id: {rule_id!r}")
         self._rules[rule_id] = RuleDefinition(
-            rule_id, function, deepcopy(dict(parameters or {}))
+            rule_id, function, MappingProxyType(deepcopy(dict(parameters or {})))
         )
 
     def get(self, rule_id: str) -> RuleDefinition:
