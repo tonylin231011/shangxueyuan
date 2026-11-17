@@ -1,0 +1,27 @@
+name: Starbucks simulation engine tests
+
+on:
+  push:
+    paths:
+      - "courses/starbucks-2008/engine/**"
+      - "courses/starbucks-2008/tests/**"
+      - ".github/workflows/starbucks-engine-tests.yml"
+  pull_request:
+    paths:
+      - "courses/starbucks-2008/engine/**"
+      - "courses/starbucks-2008/tests/**"
+      - ".github/workflows/starbucks-engine-tests.yml"
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: courses/starbucks-2008
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run engine tests
+        run: python -m unittest discover -s tests -v
