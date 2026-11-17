@@ -28,6 +28,9 @@ class RuleInvocation:
     rule_id: str
     inputs: Mapping[str, Any] = field(default_factory=dict)
 
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "inputs", MappingProxyType(deepcopy(dict(self.inputs))))
+
 
 @dataclass(frozen=True)
 class Event:
@@ -56,7 +59,7 @@ class RuleDefinition:
 
 
 class RuleRegistry:
-    """Registry is frozen by convention after construction; duplicate IDs fail."""
+    """Registry rejects changes after freeze; duplicate IDs always fail."""
 
     def __init__(self) -> None:
         self._rules: dict[str, RuleDefinition] = {}
@@ -261,7 +264,7 @@ def assess_evidence(evidence):
     baseline = evidence.get("baseline_balance")
     if sampling == "unknown" or assignment == "unknown":
         grade = "insufficient_design_information"
-    elif assignment == "randomized" and baseline is True and not confounders:
+    elif sampling == "randomized" and assignment == "randomized" and baseline is True and not confounders:
         grade = "randomized_design_candidate"
     elif assignment != "randomized" and baseline is True and evidence.get("controls_documented") is True:
         grade = "quasi_experimental_candidate"
