@@ -167,6 +167,11 @@ class EngineTests(unittest.TestCase):
         self.assertEqual(result["decision_energy"], 0)
         self.assertEqual(result["approved_projects_in_execution"], 1)
 
+
+    def test_frozen_registry_rejects_late_rule_registration(self):
+        with self.assertRaises(EngineError):
+            self.registry.register("late.rule", lambda state, inputs, params: {})
+
     def test_rule_parameters_are_immutable_after_registration(self):
         parameters = self.registry.get("strategy.apply_illustrative").parameters
         with self.assertRaises(TypeError):
