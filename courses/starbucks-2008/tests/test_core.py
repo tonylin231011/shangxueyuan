@@ -1,4 +1,6 @@
+import json
 import unittest
+from pathlib import Path
 
 from engine.core import (
     EngineError, Event, IndexValue, RuleInvocation, Trigger, assess_evidence,
@@ -131,6 +133,35 @@ class EngineTests(unittest.TestCase):
         audit = audit_legacy_resource_cost(2, 5, 2)
         self.assertEqual(audit["derived_delta"], 3)
         self.assertEqual(audit["reconciliation_status"], "conflict")
+
+
+    def test_v1_0_json_fixture_matches_legacy_loader(self):
+        fixture_path = Path(__file__).parents[1] / "fixtures" / "v1.0-legacy-moves.json"
+        fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
+        self.assertEqual([move["move"] for move in fixture["moves"]],
+                         ["001", "002", "003", "004", "005"])
+        self.assertIn("no auditable unit pricing",
+                      fixture["moves"][3]["cost_allocation"].lower())
+
+    def test_execution_queue_can_continue_when_decision_energy_is_zero(self):
+        initial = dict(self.initial, decision_energy=0, approved_projects_in_execution=1)
+        # An observation event has no new CEO cost and leaves already-authorized work intact.
+        event = Event("OBS", "2008-01-20T09:00:00-08:00", "observation", "CEO",
+                      "observe approved work", sequence=1)
+        result = replay(initial, [event], self.registry)
+        self.assertEqual(result["decision_energy"], 0)
+        self.assertEqual(result["approved_projects_in_execution"], 1)
+
+    def test_rule_parameters_are_immutable_after_registration(self):
+        parameters = self.registry.get("strategy.apply_illustrative").parameters
+        with self.assertRaises(TypeError):
+            parameters["load_per_training_store"] = 99
+
+    def test_duplicate_event_id_rejected(self):
+        event = self.event("DUP", "2008-01-08T09:00:00-08:00", 1,
+                           "resource.charge", {"cost": 1})
+        with self.assertRaises(EngineError):
+            replay(self.initial, [event, event], self.registry)
 
 
 if __name__ == "__main__":
