@@ -1,0 +1,70 @@
+{
+  "fixture_id": "STARBUCKS-2008-V1.0-LEGACY-001",
+  "source_version": "V1.0 original player record",
+  "classification": "S|simulation record, preserving source inconsistencies",
+  "simulated_start": "2008-01-07T07:30:00-08:00",
+  "initial_state": {
+    "decision_energy": 12,
+    "legacy_resource_audits": [],
+    "product_complexity_index": 100,
+    "training_coverage_stores": 0,
+    "organization_load_points": 0.0,
+    "evidence_quality_points": 0.0,
+    "expansion_delay_days": 0
+  },
+  "moves": [
+    {
+      "move": "001",
+      "sim_time": "2008-01-07T07:30:00-08:00",
+      "player_instruction": "调取区域运营团队的报告，并且要求 COO 回答：交易笔数下降集中在哪些门店？是所有顾客都减少到店，还是部分顾客流失？我们的收入在涨，客单价在涨，是否影响到了订单量？从顾客的满意度来看，价格、体验、便利性产生了哪一些影响？竞争对手做了哪一些策略？对我们有何影响？",
+      "calendar_elapsed_days": 1.5,
+      "reported_energy_cost": 2,
+      "reported_energy_after": 10,
+      "cost_allocation": "package-level only"
+    },
+    {
+      "move": "002",
+      "sim_time": "2008-01-08T09:00:00-08:00",
+      "player_instruction": "1.找到顾客的数据明细，看看是顾客减少消费频率，还是部分顾客永久流失；2.分析高密度区域的下降门店，搞清楚下降原因，是内部分流还是因为竞争对手；3.实地调研门店体验",
+      "calendar_elapsed_days": 3,
+      "reported_energy_cost": 5,
+      "reported_energy_after": 5,
+      "cost_allocation": "three concurrent investigations; subtask allocation not itemized"
+    },
+    {
+      "move": "003",
+      "sim_time": "2008-01-11T12:00:00-08:00",
+      "player_instruction": "同意",
+      "reported_energy_before": 5,
+      "displayed_energy_cost": 2,
+      "reported_energy_after": 2,
+      "derived_energy_delta": 3,
+      "reconciliation": "conflict; preserve both displayed cost and balance-derived delta"
+    },
+    {
+      "move": "004",
+      "sim_time": "2008-01-12T09:00:00-08:00",
+      "player_instruction": "暂停高密度区域部分扩张；对饮品定制和产品种类中销量最少的几项进行审核。考虑精简定制和品类，降低门店运营的复杂度，同时要加强门店员工的培训，以提升效率，减少用户的等待时间",
+      "calendar_elapsed_days": 2,
+      "reported_energy_cost": 2,
+      "reported_energy_after": 0,
+      "cost_allocation": "package-level cost recorded; no auditable unit pricing for each sub-action"
+    },
+    {
+      "move": "005",
+      "sim_time": "2008-01-14T09:00:00-08:00",
+      "player_instruction": "看看后续执行和数据验证情况",
+      "calendar_elapsed_days": 6,
+      "reported_energy_cost": 0,
+      "reported_energy_after": 0,
+      "cost_allocation": "observation of previously authorized execution; no new CEO decision-energy cost"
+    }
+  ],
+  "explicit_gaps": [
+    "MOVE 003 displayed cost conflicts with balance-derived delta",
+    "MOVE 004 package cost exists, but individual action/task prices were never specified",
+    "MOVE 002 parallel investigations lack task-level completion timestamps and dependency records",
+    "legacy internal business metrics remain S|simulation, not historical Starbucks data"
+  ],
+  "replay_policy": "The fixture is an audit record. It does not invent missing sub-action costs or upgrade simulated metrics into historical facts."
+}
