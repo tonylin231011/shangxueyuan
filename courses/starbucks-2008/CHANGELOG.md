@@ -11,7 +11,7 @@
 - 补充顾客分层数据勾稽、培训试点基线缺口、产品毛利/连带率缺口登记。
 - 将真实历史时间线与本局模拟时间线分开；将FY2008公开目标及美国业务交易趋势纳入开局材料。
 - 重新核验1月7日、1月11日和1月30日Starbucks Archive员工信PDF链接；截至2026-11-17可打开，并补充可检索标题与页码定位。
-- 新增GitHub Actions单元测试工作流；首次CI发现旧版engine/__init__.py仍导入已删除的StateChange，已更新V1.2导出接口并提交修复，等待复跑结果。
+- 新增GitHub Actions单元测试工作流；首次CI发现旧版engine/__init__.py仍导入已删除的StateChange，已更新V1.2导出接口。修复后的GitHub Actions验证运行 #37 共20项测试全部通过（[运行记录](https://github.com/tonylin231011/shangxueyuan/actions/runs/44107128113)）。
 - 将INDEX中的“基准档案”更正为“原始档案”。
 
 ### V1.2边界
