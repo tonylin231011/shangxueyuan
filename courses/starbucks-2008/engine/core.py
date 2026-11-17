@@ -99,9 +99,7 @@ def validate_initial_state(state: dict[str, Any]) -> None:
         raise EngineError("decision_energy must be a non-negative integer")
 
 
-def _rule_charge_energy(
-    state: dict[str, Any], inputs: Mapping[str, Any], params: Mapping[str, Any]
-) -> dict[str, Any]:
+def _rule_charge_energy(state, inputs, params):
     cost = inputs.get("cost")
     if not isinstance(cost, int) or cost < 0:
         raise EngineError("resource.charge cost must be a non-negative integer")
@@ -111,9 +109,7 @@ def _rule_charge_energy(
     return {"decision_energy": before - cost}
 
 
-def _rule_reconcile_legacy_energy(
-    state: dict[str, Any], inputs: Mapping[str, Any], params: Mapping[str, Any]
-) -> dict[str, Any]:
+def _rule_reconcile_legacy_energy(state, inputs, params):
     before = inputs.get("reported_before")
     displayed_cost = inputs.get("displayed_cost")
     reported_after = inputs.get("reported_after")
@@ -134,9 +130,7 @@ def _rule_reconcile_legacy_energy(
     return {"decision_energy": reported_after, "legacy_resource_audits": audit}
 
 
-def _rule_apply_strategy(
-    state: dict[str, Any], inputs: Mapping[str, Any], params: Mapping[str, Any]
-) -> dict[str, Any]:
+def _rule_apply_strategy(state, inputs, params):
     """Transparent illustrative mechanics; parameters are not empirically calibrated."""
     prune = inputs.get("product_prune_units", 0)
     training = inputs.get("training_store_count", 0)
@@ -148,13 +142,10 @@ def _rule_apply_strategy(
             raise EngineError(f"{name} must be non-negative")
     if pilot > training:
         raise EngineError("pilot_store_count cannot exceed training_store_count")
-    load = (
-        training * params["load_per_training_store"]
-        + prune * params["load_per_prune_unit"]
-    )
+    load = training * params["load_per_training_store"] + prune * params["load_per_prune_unit"]
     evidence_gain = pilot * params["evidence_gain_per_pilot_store"]
     return {
-        "product_complexity_index": state["product_complexity_index"] - prune,
+        "product_prune_units_cumulative": state["product_prune_units_cumulative"] + prune,
         "training_coverage_stores": state["training_coverage_stores"] + training,
         "organization_load_points": state["organization_load_points"] + load,
         "evidence_quality_points": state["evidence_quality_points"] + evidence_gain,
@@ -167,20 +158,14 @@ def build_default_registry() -> RuleRegistry:
     registry.register("resource.charge", _rule_charge_energy)
     registry.register("legacy.resource.reconcile", _rule_reconcile_legacy_energy)
     registry.register(
-        "strategy.apply_illustrative",
-        _rule_apply_strategy,
-        {
-            "load_per_training_store": 0.5,
-            "load_per_prune_unit": 0.2,
-            "evidence_gain_per_pilot_store": 0.5,
-        },
+        "strategy.apply_illustrative", _rule_apply_strategy,
+        {"load_per_training_store": 0.5, "load_per_prune_unit": 0.2,
+         "evidence_gain_per_pilot_store": 0.5},
     )
     return registry
 
 
-def _apply_rule(
-    state: dict[str, Any], invocation: RuleInvocation, registry: RuleRegistry
-) -> dict[str, Any]:
+def _apply_rule(state, invocation, registry):
     definition = registry.get(invocation.rule_id)
     outputs = definition.function(
         deepcopy(state), deepcopy(dict(invocation.inputs)), deepcopy(dict(definition.parameters))
@@ -191,21 +176,15 @@ def _apply_rule(
     for key, value in outputs.items():
         if key not in state:
             raise EngineError(f"Rule {invocation.rule_id} wrote unknown state key: {key}")
-        if key == "decision_energy" and (
-            not isinstance(value, int) or value < 0
-        ):
+        if key == "decision_energy" and (not isinstance(value, int) or value < 0):
             raise EngineError("decision_energy must remain a non-negative integer")
-        old_value = state[key]
-        if key not in {"legacy_resource_audits"} and type(old_value) is not type(value):
+        if key != "legacy_resource_audits" and type(state[key]) is not type(value):
             raise EngineError(f"Rule {invocation.rule_id} changed type for {key}")
         next_state[key] = value
     return next_state
 
 
-def apply_event(
-    state: dict[str, Any], event: Event, seen_ids: set[str],
-    registry: RuleRegistry | None = None,
-) -> dict[str, Any]:
+def apply_event(state, event, seen_ids, registry=None):
     """Apply an event atomically through registered rule functions only."""
     registry = registry or build_default_registry()
     if event.event_id in seen_ids:
@@ -213,22 +192,17 @@ def apply_event(
     _parse_time(event.sim_time)
     if not isinstance(event.sequence, int) or event.sequence < 0:
         raise EngineError("sequence must be a non-negative integer")
-    if not event.rules:
-        return deepcopy(state)
     next_state = deepcopy(state)
     for invocation in event.rules:
         next_state = _apply_rule(next_state, invocation, registry)
     return next_state
 
 
-def _event_order(event: Event) -> tuple[datetime, int, str]:
+def _event_order(event):
     return (_parse_time(event.sim_time), event.sequence, event.event_id)
 
 
-def replay_with_trace(
-    initial_state: dict[str, Any], events: Iterable[Event],
-    registry: RuleRegistry | None = None,
-) -> list[dict[str, Any]]:
+def replay_with_trace(initial_state, events, registry=None):
     """Return deterministic snapshots. Parallel work may overlap; state commits serialize."""
     validate_initial_state(initial_state)
     registry = registry or build_default_registry()
@@ -236,7 +210,7 @@ def replay_with_trace(
     ids = [event.event_id for event in ordered]
     if len(ids) != len(set(ids)):
         raise EngineError("Duplicate event_id in replay")
-    known: set[str] = set()
+    known = set()
     state = deepcopy(initial_state)
     trace = [{"event_id": "INITIAL", "state": deepcopy(state)}]
     for event in ordered:
@@ -249,22 +223,15 @@ def replay_with_trace(
     return trace
 
 
-def replay(
-    initial_state: dict[str, Any], events: Iterable[Event],
-    registry: RuleRegistry | None = None,
-) -> dict[str, Any]:
+def replay(initial_state, events, registry=None):
     return replay_with_trace(initial_state, events, registry)[-1]["state"]
 
 
-def audit_legacy_resource_cost(
-    displayed_cost: int, balance_before: int, balance_after: int
-) -> dict[str, Any]:
+def audit_legacy_resource_cost(displayed_cost, balance_before, balance_after):
     derived_delta = balance_before - balance_after
     return {
-        "displayed_cost": displayed_cost,
-        "balance_before": balance_before,
-        "balance_after": balance_after,
-        "derived_delta": derived_delta,
+        "displayed_cost": displayed_cost, "balance_before": balance_before,
+        "balance_after": balance_after, "derived_delta": derived_delta,
         "reconciliation_status": "consistent" if displayed_cost == derived_delta else "conflict",
     }
 
@@ -278,7 +245,7 @@ def indexed_product(left: IndexValue, right: IndexValue) -> float:
     return left.value * right.value / left.base_value
 
 
-def assess_evidence(evidence: Mapping[str, Any]) -> dict[str, Any]:
+def assess_evidence(evidence):
     """Grade design limitations; never equate a randomized label with proven causality."""
     sampling = evidence.get("sampling_method", "unknown")
     assignment = evidence.get("assignment_method", "unknown")
@@ -293,8 +260,7 @@ def assess_evidence(evidence: Mapping[str, Any]) -> dict[str, Any]:
     else:
         grade = "descriptive_only_with_confounders" if confounders else "descriptive_only"
     return {
-        "grade": grade,
-        "causal_effect_established": False,
+        "grade": grade, "causal_effect_established": False,
         "known_confounders": list(confounders),
         "reason": "Design classification is a guardrail, not a causal estimate.",
     }
@@ -309,19 +275,15 @@ class Trigger:
     no_action_reason: str
 
 
-def evaluate_triggers(
-    triggers: Iterable[Trigger], state: Mapping[str, Any], sim_time: str
-) -> list[dict[str, Any]]:
+def evaluate_triggers(triggers, state, sim_time):
     """Record every evaluated trigger, including those that did not fire."""
     _parse_time(sim_time)
     records = []
     for trigger in sorted(triggers, key=lambda item: item.trigger_id):
         fired = bool(trigger.predicate(state))
         records.append({
-            "trigger_id": trigger.trigger_id,
-            "description": trigger.description,
-            "checked_at": sim_time,
-            "condition_met": fired,
+            "trigger_id": trigger.trigger_id, "description": trigger.description,
+            "checked_at": sim_time, "condition_met": fired,
             "action": trigger.action if fired else None,
             "reason": "trigger_condition_met" if fired else trigger.no_action_reason,
         })
