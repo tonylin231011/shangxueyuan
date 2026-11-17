@@ -1,8 +1,8 @@
 # 商业残局 01｜星巴克：增长、体验与扩张的冲突
 
 > 原始模拟归档：v1.0  
- > 审计、引擎设计与原型：v1.1  
-> 规则引擎与历史棋谱fixture：v1.2（独立开发分支）
+> 审计与引擎设计：v1.1  
+> 规则引擎与历史棋谱fixture：v1.2（独立开发分支）  
 > 状态：模拟推进至2008-01-20；最终战略决策和历史复盘待完成
 
 ## 课程定位
@@ -38,6 +38,9 @@ V1.2规则引擎通过预登记函数计算状态变化，具备确定性回放�
 - [最小可复现模拟引擎设计](engine-design-v1.1.md)
 - [事件账本引擎原型](engine/README.md)
 - [引擎单元测试](tests/test_core.py)
+- [V1.2设计测试与代码测试矩阵](tests/TEST-MATRIX.md)
+- [V1.0原始棋谱fixture](fixtures/v1.0-legacy-moves.json)
+- [T7双策略分支轨迹](fixtures/t7-strategy-branch-trajectories.json)
 - [版本记录](CHANGELOG.md)
 
 ## 重要标签
