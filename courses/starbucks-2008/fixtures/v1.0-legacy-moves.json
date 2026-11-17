@@ -6,7 +6,11 @@
   "initial_state": {
     "decision_energy": 12,
     "legacy_resource_audits": [],
-    "product_complexity_index": 100,
+    "board_trust": 7,
+    "organization_execution_capacity": 8,
+    "brand_trust_index": 100,
+    "employee_morale_index": 100,
+    "product_prune_units_cumulative": 0,
     "training_coverage_stores": 0,
     "organization_load_points": 0.0,
     "evidence_quality_points": 0.0,
