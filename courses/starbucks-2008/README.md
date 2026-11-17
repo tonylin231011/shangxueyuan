@@ -19,7 +19,7 @@
 
 ## 当前版本状态
 
-V1.0保留原始玩家指令、模拟结果和已知缺陷。V1.1新增审计结论与引擎设计。V1.2在独立分支实现规则注册表、回填V1.0棋谱fixture，并补齐数据口径和史实开局材料。
+V1.0原始内容已按原始分支blob版本保存在 archive/v1.0/，包含scenario、simulation-rules、simulation-data、decision-log、debrief和historical-record六份不可变快照。课程根目录是后续维护版本：V1.1新增审计结论与引擎设计；V1.2在独立分支实现规则注册表、回填V1.0棋谱fixture，并补齐数据口径和史实开局材料。
 
 V1.2规则引擎通过预登记函数计算状态变化，具备确定性回放、指数基期检查、证据设计分级、NPC触发评估日志和策略分支测试；**它不是完整模拟器**，尚未实现完整NPC规划、历史信息发布门控、完整任务排程或经真实经营数据校准的状态模型。
 
@@ -39,6 +39,7 @@ V1.2规则引擎通过预登记函数计算状态变化，具备确定性回放�
 - [事件账本引擎原型](engine/README.md)
 - [引擎单元测试](tests/test_core.py)
 - [V1.2设计测试与代码测试矩阵](tests/TEST-MATRIX.md)
+- [V1.0原始文件快照与校验清单](archive/v1.0/ARCHIVE-MANIFEST.md)
 - [V1.0原始棋谱fixture](fixtures/v1.0-legacy-moves.json)
 - [T7双策略分支轨迹](fixtures/t7-strategy-branch-trajectories.json)
 - [版本记录](CHANGELOG.md)
