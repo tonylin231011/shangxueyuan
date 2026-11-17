@@ -18,17 +18,18 @@
 9. [V1.1审计结论与修复清单](audit-findings-v1.1.md)
 10. [最小可复现模拟引擎设计](engine-design-v1.1.md)
 11. [V1.2规则引擎说明](engine/README.md)
-12. [V1.0原始棋谱fixture](fixtures/v1.0-legacy-moves.json)
-13. [V1.0棋谱加载器](engine/legacy_fixture.py)
-14. [引擎单元测试](tests/test_core.py)
-15. [V1.2测试矩阵](tests/TEST-MATRIX.md)
-16. [T7双策略分支轨迹](fixtures/t7-strategy-branch-trajectories.json)
-17. [版本记录](CHANGELOG.md)
+12. [V1.0不可变原始文件快照](archive/v1.0/ARCHIVE-MANIFEST.md)
+13. [V1.0原始棋谱fixture](fixtures/v1.0-legacy-moves.json)
+14. [V1.0棋谱加载器](engine/legacy_fixture.py)
+15. [引擎单元测试](tests/test_core.py)
+16. [V1.2测试矩阵](tests/TEST-MATRIX.md)
+17. [T7双策略分支轨迹](fixtures/t7-strategy-branch-trajectories.json)
+18. [版本记录](CHANGELOG.md)
 
 ## 版本纪律
 
 - V1.0 是原始归档，保留玩家原始指令、当时模拟结果和已知缺陷。
-- V1.1 增加审计结论、引擎设计和最小事件账本原型；V1.2在独立分支实现规则注册表并回填V1.0棋谱fixture，不覆盖或篡改 V1.0 原始文件。
+- V1.0原始内容在 archive/v1.0/ 保留不可变快照；根目录为后续维护文件。V1.1增加审计结论与引擎设计；V1.2在根目录维护版实现规则注册表并回填V1.0棋谱fixture。
 - V1.2引擎通过预登记规则函数计算状态变化，并提供确定性回放、证据设计分级、NPC触发评估日志和策略分支测试；尚未实现完整NPC规划、历史信息发布门控、完整排程或校准后的商业状态模型。
 - 玩家尚未完成最终战略决策，任何版本都不得替玩家补写。
 
