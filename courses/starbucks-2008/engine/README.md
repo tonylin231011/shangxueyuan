@@ -14,7 +14,7 @@ python -m unittest discover -s courses/starbucks-2008/tests -v
 
 ## Contract
 
-- A rule registry maps each rule_id to an executable function and immutable, pre-registered parameters.
+- A frozen rule registry maps each rule_id to an executable function and immutable, pre-registered parameters. RuleInvocation inputs are also immutable.
 - Events contain rule invocations and inputs, not author-supplied state deltas.
 - Unregistered rules, invalid inputs, unknown state fields, duplicate event IDs and unresolved dependencies fail.
 - Every event has a timezone-aware simulation timestamp.
