@@ -112,6 +112,10 @@ class EngineTests(unittest.TestCase):
         self.assertGreater(a["organization_load_points"], b["organization_load_points"])
         self.assertGreater(b["evidence_quality_points"], a["evidence_quality_points"])
         self.assertEqual(a["board_trust"], b["board_trust"])
+        self.assertEqual(a["organization_load_points"], 12.6)
+        self.assertEqual(b["organization_load_points"], 1.0)
+        self.assertEqual(a["evidence_quality_points"], 0.0)
+        self.assertEqual(b["evidence_quality_points"], 1.0)
         self.assertEqual(self.registry.get("strategy.apply_illustrative").parameters,
                          {"load_per_training_store": 0.5, "load_per_prune_unit": 0.2,
                           "evidence_gain_per_pilot_store": 0.5})
@@ -167,6 +171,12 @@ class EngineTests(unittest.TestCase):
         self.assertEqual(result["decision_energy"], 0)
         self.assertEqual(result["approved_projects_in_execution"], 1)
 
+
+
+    def test_rule_invocation_inputs_are_immutable(self):
+        invocation = RuleInvocation("resource.charge", {"cost": 1})
+        with self.assertRaises(TypeError):
+            invocation.inputs["cost"] = 99
 
     def test_frozen_registry_rejects_late_rule_registration(self):
         with self.assertRaises(EngineError):
