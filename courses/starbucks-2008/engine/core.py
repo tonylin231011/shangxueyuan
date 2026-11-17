@@ -60,11 +60,18 @@ class RuleRegistry:
 
     def __init__(self) -> None:
         self._rules: dict[str, RuleDefinition] = {}
+        self._frozen = False
+
+    def freeze(self) -> "RuleRegistry":
+        self._frozen = True
+        return self
 
     def register(
         self, rule_id: str, function: RuleFunction,
         parameters: Mapping[str, Any] | None = None,
     ) -> None:
+        if self._frozen:
+            raise EngineError("Rule registry is frozen; create a new version to change rules")
         if not rule_id or rule_id in self._rules:
             raise EngineError(f"Missing or duplicate rule_id: {rule_id!r}")
         self._rules[rule_id] = RuleDefinition(
@@ -163,7 +170,7 @@ def build_default_registry() -> RuleRegistry:
         {"load_per_training_store": 0.5, "load_per_prune_unit": 0.2,
          "evidence_gain_per_pilot_store": 0.5},
     )
-    return registry
+    return registry.freeze()
 
 
 def _apply_rule(state, invocation, registry):
