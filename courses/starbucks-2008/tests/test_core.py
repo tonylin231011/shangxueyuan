@@ -201,5 +201,12 @@ class EngineTests(unittest.TestCase):
             replay(self.initial, [event, event], self.registry)
 
 
+    def test_default_registry_contains_expected_rules(self):
+        self.assertEqual(
+            self.registry.ids(),
+            ("legacy.resource.reconcile", "resource.charge", "strategy.apply_illustrative"),
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
