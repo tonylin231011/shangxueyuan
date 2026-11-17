@@ -41,8 +41,9 @@
 - 可支持的事实：
   - 2008年1月7日，董事会宣布Howard Schultz在董事长职务之外重新担任CEO；
   - Jim Donald离任；
-  - 公司公开提出重新聚焦顾客体验与创新等战略举措。
-- 适用限制：不能据此推断本局虚构的私人会议、报告和CEO具体调查指令。
+  - 同一公告明确称Martin Coles为Chief Operating Officer，并说明他将与Schultz合作、负责业务运营监督；
+  - 公司公开提出重新聚焦顾客体验与创新、放慢美国开店速度、关闭部分表现不佳门店、重新关注门店单位经济性、加强门店伙伴培训与工具等战略举措。
+- 适用限制：公告可支持CEO任命、COO职务和公开战略方向；不能据此推断本局虚构的私人会议、报告和CEO具体调查指令。
 
 ### H4. Howard Schultz 2008年1月7日员工信件：Transformation Agenda Communication #1
 
@@ -58,10 +59,10 @@
 - 发布机构：Starbucks Archive
 - URL：https://archive.starbucks.com/uploads/2018/12/4b-transformation-memos-transformation-agenda-communication-2-2008-jan-11-final.pdf
 - 可支持的事实：
-  - Martin Coles当时担任COO；
-  - Pete Bocian当时担任EVP、CFO及首席行政官；
-  - Schultz说明新的高级领导团队安排。
-- 适用限制：本局角色在1月8日的模拟谈话并非真实会议纪要。
+  - 信件日期为2008年1月11日，主题为新的领导团队；
+  - Schultz列明Martin Coles为COO、Pete Bocian为EVP/CFO/Chief Administrative Officer、Paula Boggs为EVP/Law and Corporate Affairs；
+  - 信件进一步说明其他领导团队成员的新岗位和汇报关系。
+- 适用限制：1月11日信件确认当时领导团队安排；Martin Coles的COO身份已在1月7日SEC公告中公开，不应把1月11日误作其首次被确认担任COO。本局1月8日的具体模拟谈话仍不是历史会议纪要。
 
 ### H6. Howard Schultz 2008年1月30日员工信件：Transformation Agenda Communication #3
 
