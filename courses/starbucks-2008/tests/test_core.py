@@ -116,6 +116,12 @@ class EngineTests(unittest.TestCase):
         self.assertEqual(b["organization_load_points"], 1.0)
         self.assertEqual(a["evidence_quality_points"], 0.0)
         self.assertEqual(b["evidence_quality_points"], 1.0)
+        trajectory_path = Path(__file__).parents[1] / "fixtures" / "t7-strategy-branch-trajectories.json"
+        trajectories = json.loads(trajectory_path.read_text(encoding="utf-8"))
+        for key in ("product_prune_units_cumulative", "training_coverage_stores",
+                    "organization_load_points", "evidence_quality_points", "expansion_delay_days"):
+            self.assertEqual(a[key], trajectories["branch_A"]["expected_state"][key])
+            self.assertEqual(b[key], trajectories["branch_B"]["expected_state"][key])
         self.assertEqual(self.registry.get("strategy.apply_illustrative").parameters,
                          {"load_per_training_store": 0.5, "load_per_prune_unit": 0.2,
                           "evidence_gain_per_pilot_store": 0.5})
@@ -157,6 +163,7 @@ class EngineTests(unittest.TestCase):
     def test_v1_0_json_fixture_matches_legacy_loader(self):
         fixture_path = Path(__file__).parents[1] / "fixtures" / "v1.0-legacy-moves.json"
         fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
+        self.assertEqual(fixture["initial_state"], self.initial)
         self.assertEqual([move["move"] for move in fixture["moves"]],
                          ["001", "002", "003", "004", "005"])
         self.assertIn("no auditable unit pricing",
