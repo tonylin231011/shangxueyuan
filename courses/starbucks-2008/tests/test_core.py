@@ -116,9 +116,10 @@ class EngineTests(unittest.TestCase):
         records = evaluate_triggers(triggers, {"market_opportunity": 2, "financing_available": False},
                                     "2008-01-15T09:00:00-08:00")
         self.assertEqual(len(records), 2)
-        self.assertFalse(records[0]["condition_met"])
-        self.assertEqual(records[0]["reason"], "market opportunity below threshold")
-        self.assertIsNone(records[1]["action"])
+        by_id = {record["trigger_id"]: record for record in records}
+        self.assertFalse(by_id["T-OPEN"]["condition_met"])
+        self.assertEqual(by_id["T-OPEN"]["reason"], "market opportunity below threshold")
+        self.assertIsNone(by_id["T-CLOSED"]["action"])
 
     def test_insufficient_energy_rejected(self):
         event = self.event("E1", "2008-01-08T09:00:00-08:00", 1,
