@@ -72,30 +72,31 @@ V1.0 的模拟反馈主要由叙事脚本生成，缺少统一状态转移机制
 {
   "event_id": "EVT-0001",
   "sim_time": "2008-01-08T09:00:00-08:00",
-  "event_type": "player_action|execution|npc_action|market_shock|evidence_release|state_observation",
+  "event_type": "player_action",
   "actor": "CEO",
-  "action_or_trigger": "request_customer_cohort_analysis",
-  "preconditions": [],
-  "inputs": ["EVD-0001"],
-  "cost": {
-    "decision_energy": 1,
-    "calendar_hours": 12,
-    "execution_capacity": 0
-  },
-  "state_delta": [],
-  "uncertainty": [],
-  "causal_links": [],
+  "action": "request_customer_cohort_analysis",
+  "sequence": 1,
+  "rules": [
+    {
+      "rule_id": "resource.charge",
+      "inputs": {"cost": 1}
+    }
+  ],
+  "evidence_ids": ["EVD-0001"],
+  "parallel_group": null,
+  "depends_on": [],
   "player_visible": true,
-  "seed": null,
-  "notes": "描述性记录"
+  "notes": "事件只提交规则输入，不直接填写状态差分"
 }
 ```
 
 字段约束：
-- `state_delta` 必须列出变量、旧值、新值、单位和转换规则ID。
-- `uncertainty` 保存范围、概率或定性限制；不允许把点估计伪装成确定值。
-- `causal_links` 指向行动、证据和规则；不能只写“因为CEO要求”。
-- 纯叙事事件也必须标注 `state_delta=[]`，避免误认为它改变了经营状态。
+- 状态差分只能由预先注册的规则函数计算；事件作者不得填写任意 before/after。
+- 每个rule_id必须映射到可执行函数、不可变参数、输入约束和允许写入的状态字段。
+- 规则注册表在分支运行前冻结；规则或参数变更必须创建新版本。
+- uncertainty保存范围、概率或定性限制；不允许把点估计伪装成确定值。
+- causal_links在运行记录中指向行动、证据和规则；不能只写“因为CEO要求”。
+- 纯叙事事件允许rules=[]，且不得改变世界状态。
 - 修订错误时追加更正事件，不覆盖历史事件。
 
 ## 5. 三种资源严格分账
