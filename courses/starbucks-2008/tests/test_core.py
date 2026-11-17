@@ -59,6 +59,14 @@ class EngineTests(unittest.TestCase):
         with self.assertRaises(EngineError):
             indexed_product(IndexValue(100.4, "week-a"), IndexValue(104, "week-b"))
 
+
+    def test_t3_customer_transactions_decomposition(self):
+        result = indexed_product(
+            IndexValue(96, "FY07-H1", 100),
+            IndexValue(95, "FY07-H1", 100),
+        )
+        self.assertAlmostEqual(result, 91.2)
+
     def test_evidence_grade_does_not_claim_causality(self):
         result = assess_evidence({
             "sampling_method": "nonrandom", "assignment_method": "manager_selected",
