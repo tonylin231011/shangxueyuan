@@ -1,59 +1,137 @@
 import unittest
-from engine.core import EngineError, Event, StateChange, audit_legacy_resource_cost, indexed_product, replay
+
+from engine.core import (
+    EngineError, Event, IndexValue, RuleInvocation, Trigger, assess_evidence,
+    audit_legacy_resource_cost, build_default_registry, evaluate_triggers,
+    indexed_product, replay, replay_with_trace,
+)
 
 
 class EngineTests(unittest.TestCase):
     def setUp(self):
-        self.initial = {"decision_energy": 12, "board_trust": 7, "employee_morale_index": 100, "approved_projects": 9}
+        self.registry = build_default_registry()
+        self.initial = {
+            "decision_energy": 12,
+            "legacy_resource_audits": [],
+            "product_complexity_index": 100,
+            "training_coverage_stores": 0,
+            "organization_load_points": 0.0,
+            "evidence_quality_points": 0.0,
+            "expansion_delay_days": 0,
+        }
 
-    def test_event_cost_and_state_change(self):
-        event = Event("EVT-001", "2008-01-08T09:00:00-08:00", "player_action", "CEO",
-                      "authorize_store_research", 2,
-                      changes=(StateChange("approved_projects", 9, 7, "RULE-APPROVAL-01", "projects"),))
-        result = replay(self.initial, [event])
-        self.assertEqual(result["decision_energy"], 10)
-        self.assertEqual(result["approved_projects"], 7)
+    def event(self, event_id, time, sequence, rule_id, inputs, **kwargs):
+        return Event(
+            event_id, time, "execution", "COO", event_id, sequence=sequence,
+            rules=(RuleInvocation(rule_id, inputs),), **kwargs
+        )
 
-    def test_replay_is_deterministic(self):
-        events = [
-            Event("E1", "2008-01-08T09:00:00-08:00", "player_action", "CEO", "act", 1,
-                  changes=(StateChange("board_trust", 7, 6, "R1", "score"),)),
-            Event("E2", "2008-01-09T09:00:00-08:00", "npc_action", "CFO", "report",
-                  changes=(StateChange("employee_morale_index", 100, 101, "R2", "index"),)),
+    def test_registered_rule_computes_resource_change(self):
+        event = self.event("E1", "2008-01-08T09:00:00-08:00", 1,
+                           "resource.charge", {"cost": 2})
+        self.assertEqual(replay(self.initial, [event], self.registry)["decision_energy"], 10)
+
+    def test_unknown_rule_rejected(self):
+        event = self.event("E1", "2008-01-08T09:00:00-08:00", 1,
+                           "R-NOT-REGISTERED", {})
+        with self.assertRaises(EngineError):
+            replay(self.initial, [event], self.registry)
+
+    def test_legacy_move003_conflict_is_preserved(self):
+        event = self.event("M003", "2008-01-11T12:00:00-08:00", 1,
+                           "legacy.resource.reconcile",
+                           {"reported_before": 5, "displayed_cost": 2, "reported_after": 2})
+        state = dict(self.initial, decision_energy=5)
+        result = replay(state, [event], self.registry)
+        self.assertEqual(result["decision_energy"], 2)
+        self.assertEqual(result["legacy_resource_audits"][0]["derived_delta"], 3)
+        self.assertEqual(result["legacy_resource_audits"][0]["status"], "conflict")
+
+    def test_same_base_indices_only(self):
+        result = indexed_product(
+            IndexValue(100.4, "same-week", 100),
+            IndexValue(104, "same-week", 100),
+        )
+        self.assertAlmostEqual(result, 104.416)
+        with self.assertRaises(EngineError):
+            indexed_product(IndexValue(100.4, "week-a"), IndexValue(104, "week-b"))
+
+    def test_evidence_grade_does_not_claim_causality(self):
+        result = assess_evidence({
+            "sampling_method": "nonrandom",
+            "assignment_method": "manager_selected",
+            "baseline_balance": False,
+            "known_confounders": ["manager initiative", "schedule changes"],
+        })
+        self.assertEqual(result["grade"], "descriptive_only_with_confounders")
+        self.assertFalse(result["causal_effect_established"])
+
+    def test_parallel_events_have_deterministic_commit_order(self):
+        later_id = self.event("B", "2008-01-08T09:00:00-08:00", 1,
+                              "resource.charge", {"cost": 2}, parallel_group="batch-1")
+        earlier_id = self.event("A", "2008-01-08T09:00:00-08:00", 1,
+                                "resource.charge", {"cost": 1}, parallel_group="batch-1")
+        trace = replay_with_trace(self.initial, [later_id, earlier_id], self.registry)
+        self.assertEqual([x["event_id"] for x in trace], ["INITIAL", "A", "B"])
+        self.assertEqual(trace[-1]["state"]["decision_energy"], 9)
+
+    def test_unresolved_dependency_rejected(self):
+        event = self.event("E2", "2008-01-08T09:00:00-08:00", 2,
+                           "resource.charge", {"cost": 1}, depends_on=("MISSING",))
+        with self.assertRaises(EngineError):
+            replay(self.initial, [event], self.registry)
+
+    def test_strategy_branches_diverge_under_same_registry(self):
+        initial = dict(self.initial, decision_energy=12)
+        aggressive = self.event(
+            "A-STRATEGY", "2008-01-12T09:00:00-08:00", 1,
+            "strategy.apply_illustrative",
+            {"product_prune_units": 3, "training_store_count": 24,
+             "pilot_store_count": 0, "expansion_delay_days": 0},
+        )
+        staged = self.event(
+            "B-STRATEGY", "2008-01-12T09:00:00-08:00", 1,
+            "strategy.apply_illustrative",
+            {"product_prune_units": 0, "training_store_count": 2,
+             "pilot_store_count": 2, "expansion_delay_days": 7},
+        )
+        a = replay(initial, [aggressive], self.registry)
+        b = replay(initial, [staged], self.registry)
+        self.assertNotEqual(a, b)
+        self.assertGreater(a["organization_load_points"], b["organization_load_points"])
+        self.assertGreater(b["evidence_quality_points"], a["evidence_quality_points"])
+        self.assertEqual(self.registry.get("strategy.apply_illustrative").parameters,
+                         {"load_per_training_store": 0.5, "load_per_prune_unit": 0.2,
+                          "evidence_gain_per_pilot_store": 0.5})
+
+    def test_trigger_audit_records_fired_and_silent(self):
+        triggers = [
+            Trigger("T-OPEN", "competitor sees opportunity",
+                    lambda s: s["market_opportunity"] > 5,
+                    "open_competitor_store", "market opportunity below threshold"),
+            Trigger("T-CLOSED", "competitor financing",
+                    lambda s: s["financing_available"],
+                    "launch_campaign", "financing unavailable"),
         ]
-        self.assertEqual(replay(self.initial, events), replay(self.initial, events))
+        records = evaluate_triggers(
+            triggers, {"market_opportunity": 2, "financing_available": False},
+            "2008-01-15T09:00:00-08:00",
+        )
+        self.assertEqual(len(records), 2)
+        self.assertFalse(records[0]["condition_met"])
+        self.assertEqual(records[0]["reason"], "market opportunity below threshold")
+        self.assertIsNone(records[1]["action"])
 
-    def test_legacy_cost_conflict_is_preserved(self):
+    def test_insufficient_energy_rejected(self):
+        event = self.event("E1", "2008-01-08T09:00:00-08:00", 1,
+                           "resource.charge", {"cost": 13})
+        with self.assertRaises(EngineError):
+            replay(self.initial, [event], self.registry)
+
+    def test_legacy_cost_helper(self):
         audit = audit_legacy_resource_cost(2, 5, 2)
         self.assertEqual(audit["derived_delta"], 3)
         self.assertEqual(audit["reconciliation_status"], "conflict")
-        self.assertEqual(audit["displayed_cost"], 2)
-
-    def test_index_identity(self):
-        self.assertAlmostEqual(indexed_product(100.4, 104, 100), 104.416)
-        self.assertAlmostEqual(indexed_product(96, 95, 100), 91.2)
-
-    def test_precondition_mismatch_rejected(self):
-        event = Event("E1", "2008-01-08T09:00:00-08:00", "execution", "COO", "bad update",
-                      changes=(StateChange("board_trust", 6, 5, "R1", "score"),))
-        with self.assertRaises(EngineError):
-            replay(self.initial, [event])
-
-    def test_negative_resources_rejected(self):
-        event = Event("E1", "2008-01-08T09:00:00-08:00", "player_action", "CEO", "too costly", 13)
-        with self.assertRaises(EngineError):
-            replay(self.initial, [event])
-
-    def test_duplicate_event_rejected(self):
-        event = Event("E1", "2008-01-08T09:00:00-08:00", "observation", "COO", "note")
-        with self.assertRaises(EngineError):
-            replay(self.initial, [event, event])
-
-    def test_events_must_be_time_ordered(self):
-        later = Event("E2", "2008-01-09T09:00:00-08:00", "observation", "COO", "later")
-        earlier = Event("E1", "2008-01-08T09:00:00-08:00", "observation", "COO", "earlier")
-        with self.assertRaises(EngineError):
-            replay(self.initial, [later, earlier])
 
 
 if __name__ == "__main__":
