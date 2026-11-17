@@ -8,10 +8,10 @@
 | T4 证据限制 | 非随机20家门店分类不得外推为全美蚕食率或竞品因果贡献 | test_evidence_grade_does_not_claim_causality | 部分覆盖；引擎尚无门店样本外推API，当前通过证据等级护栏与文档限制 |
 | T5 培训试点因果边界 | 12+12非随机试点、有经理主动性与排班混杂时，不得自动宣称培训因果效应 | test_evidence_grade_does_not_claim_causality；simulation-data.md试点基线表 | 部分覆盖；基线缺失已登记，尚无统计估计器 |
 | T6 资源与执行独立 | CEO决策精力为0时，已授权项目仍可继续执行 | test_execution_queue_can_continue_when_decision_energy_is_zero | 已覆盖最小不变量；完整任务队列调度仍未实现 |
-| T7 策略分支差异 | 同一V1.0初始状态、同一规则注册表和参数下，不同策略形成不同轨迹 | test_t7_two_strategy_paths_from_real_v1_initial_state | 已覆盖最小分支敏感性；参数为课堂假设，非历史校准 |
+| T7 策略分支差异 | 同一V1.0初始状态、同一规则注册表和参数下，不同策略形成不同轨迹 | test_t7_two_strategy_paths_from_real_v1_initial_state；fixtures/t7-strategy-branch-trajectories.json | 已覆盖并公开两条状态轨迹；参数为课堂假设，非历史校准 |
 | T8 NPC自主性 | 检查触发条件；触发与未触发均记录，不能按固定节拍强制事件 | test_trigger_audit_records_fired_and_silent | 已覆盖触发评估日志；完整NPC目标/权限/行动模型未实现 |
 | T9 历史信息防泄漏 | 历史资料未公开前不得作为玩家已知信息 | 当前无对应代码测试 | 未实现，列为后续P0；V1.2不宣称关闭 |
-| T10 可回放性 | 相同初始状态、规则参数和事件序列产生相同状态；重复事件/依赖错误拒绝 | test_t10_replay_same_inputs_same_result；test_parallel_events_have_deterministic_commit_order；test_duplicate_event_id_rejected；test_unresolved_dependency_rejected | 已覆盖最小回放与排序 |
+| T10 可回放性 | 相同初始状态、规则参数和事件序列产生相同状态；重复事件/依赖错误拒绝 | test_t10_replay_same_inputs_same_result；test_parallel_events_have_deterministic_commit_order；test_duplicate_event_id_rejected；test_unresolved_dependency_rejected；test_rule_invocation_inputs_are_immutable | 已覆盖最小回放与排序 |
 
 ## 解释
 
